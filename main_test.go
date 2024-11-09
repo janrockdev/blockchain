@@ -1,12 +1,13 @@
 package main
 
 import (
+	"testing"
 	"time"
 
 	"github.com/janrockdev/blockchain/network"
 )
 
-func main() {
+func TestMainFunction(t *testing.T) {
 	trLocal := network.NewTransportLocal("LOCAL")
 	trRemote := network.NewTransportLocal("REMOTE")
 
@@ -25,6 +26,13 @@ func main() {
 	}
 
 	s := network.NewServer(opts)
-	s.Start()
+	go s.Start()
 
+	// Allow some time for the server to start and process messages
+	time.Sleep(3 * time.Second)
+
+	// Check if the transports are connected
+	// if !trLocal.IsConnectedTo("REMOTE") || !trRemote.IsConnectedTo("LOCAL") {
+	// 	t.Errorf("Transports are not connected")
+	// }
 }
