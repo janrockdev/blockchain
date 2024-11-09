@@ -23,3 +23,61 @@ This project aims to create a custom blockchain tailored for metadata use cases.
 
 - transport_local_test < to test transport objects, network connectivity and message transport
 - ...(in progress)
+
+## Flows
+
+### Flowchart of Adding a New Block
+```mermaid
+flowchart TD
+    Start --> CreateTransaction
+    CreateTransaction --> ValidateTransaction
+    ValidateTransaction --> |Valid| AddTransactionToBlock
+    ValidateTransaction --> |Invalid| DiscardTransaction
+    AddTransactionToBlock --> MineBlock
+    MineBlock --> VerifyProofOfWork
+    VerifyProofOfWork --> |Success| AddBlockToChain
+    AddBlockToChain --> BroadcastBlock
+    BroadcastBlock --> End
+```
+
+### Class Diagram of Blockchain Components
+```mermaid
+classDiagram
+    class Blockchain {
+        +[]Block chain
+        +addBlock(Block)
+        +getLatestBlock() Block
+    }
+    class Block {
+        +int index
+        +string timestamp
+        +[]Transaction transactions
+        +string previousHash
+        +string hash
+        +int nonce
+        +calculateHash() string
+    }
+    class Transaction {
+        +string sender
+        +string recipient
+        +float amount
+        +string timestamp
+    }
+    Blockchain --> Block : contains
+    Block --> Transaction : includes
+```
+
+### Sequence Diagram of Transaction Processing
+```mermaid
+sequenceDiagram
+    participant User
+    participant Node
+    participant Miner
+    User->>Node: Submit Transaction
+    Node-->>Miner: Broadcast Transaction
+    Miner->>Miner: Validate Transaction
+    Miner->>Miner: Add to Block
+    Miner->>Miner: Mine Block
+    Miner-->>Node: New Block
+    Node-->>User: Transaction Confirmed
+```
