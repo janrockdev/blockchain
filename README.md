@@ -13,10 +13,12 @@ This project aims to create a custom blockchain tailored for metadata use cases.
 - Comprehensive testing suite for transport and network connectivity
 - ...(in progress)
 
-## Architecture
+## Process
 
-- Server container with customisable modules
+- Create server container with customisable modules
 - Configurable transport layer to allow any type of network protocol
+- Create block builder 
+- Create tranaction object to append to a block
 - ...(in progress)
 
 ## Tests
