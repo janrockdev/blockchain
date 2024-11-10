@@ -28,9 +28,9 @@ func TestMainFunction(t *testing.T) {
 	s := network.NewServer(opts)
 	go s.Start()
 
-	// Allow some time for the server to start and process messages
 	time.Sleep(3 * time.Second)
 
+	// TODO: fix this test
 	// Check if the transports are connected
 	// if !trLocal.IsConnectedTo("REMOTE") || !trRemote.IsConnectedTo("LOCAL") {
 	// 	t.Errorf("Transports are not connected")

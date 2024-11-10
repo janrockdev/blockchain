@@ -26,5 +26,4 @@ func main() {
 
 	s := network.NewServer(opts)
 	s.Start()
-
 }
