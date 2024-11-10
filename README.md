@@ -19,12 +19,14 @@ This project aims to create a custom blockchain tailored for metadata use cases.
 - Configurable transport layer to allow any type of network protocol
 - Create block builder 
 - Create tranaction object to append to a block
+- Create private/public key generator for sign and verification
 - ...(in progress)
 
 ## Tests
 
-- transport_local_test < to test transport objects, network connectivity and message transport
-- ...(in progress)
+```shell
+make test
+```
 
 ## Flows
 
