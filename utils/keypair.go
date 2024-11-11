@@ -27,6 +27,12 @@ type PublicKey struct {
 	pub *ecdsa.PublicKey
 }
 
+func (k PrivateKey) PublicKey() PublicKey {
+	return PublicKey{
+		pub: &k.pk.PublicKey,
+	}
+}
+
 func GeneratePrivateKey() PrivateKey {
 	pk, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {

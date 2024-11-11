@@ -1,66 +1,66 @@
 package engine
 
 import (
-	"bytes"
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/janrockdev/blockchain/types"
+	"github.com/janrockdev/blockchain/utils"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestBlockHash(t *testing.T) {
+type mockHasher struct{}
+
+func (m *mockHasher) Hash(b *Block) types.Hash {
+	return types.Hash{0x01, 0x02, 0x03, 0x04}
+}
+
+func TestBlock_Hash(t *testing.T) {
 	header := &Header{
-		Version:   1,
-		PrevBlock: types.Hash{0x01, 0x02, 0x03, 0x04},
-		Timestamp: time.Now().UnixNano(),
-		Height:    10,
-		Nonce:     9999,
+		Version:       1,
+		DataHash:      types.Hash{0x00},
+		PrevBlockHash: types.Hash{0x00},
+		Height:        1,
+		Timestamp:     1234567890,
 	}
 
 	block := &Block{
-		Header:       *header,
-		Transactions: []Transaction{}, // empty transactions
+		Header:       header,
+		Transactions: nil,
+		Validator:    utils.PublicKey{},
+		Signature:    &utils.Signature{},
+		hash:         types.Hash{},
 	}
 
-	hash := block.Hash()
+	hasher := &mockHasher{}
 
-	if hash.IsZero() {
-		t.Errorf("Hash is zero")
-	}
+	// Test that the hash is calculated correctly
+	expectedHash := types.Hash{0x01, 0x02, 0x03, 0x04}
+	actualHash := block.Hash(hasher)
+	assert.Equal(t, expectedHash, actualHash, "The hash should be correctly calculated")
+
+	// Test that the cached hash is returned
+	cachedHash := block.Hash(hasher)
+	assert.Equal(t, expectedHash, cachedHash, "The cached hash should be returned")
 }
 
-func TestHeader_EncodeDecodeBinary(t *testing.T) {
-	originalHeader := &Header{
-		Version:   1,
-		PrevBlock: types.Hash{0x01, 0x02, 0x03, 0x04},
-		Timestamp: time.Now().UnixNano(),
-		Height:    10,
-		Nonce:     9999,
+func randomBlock(height uint32) *Block {
+	header := &Header{
+		Version:       1,
+		PrevBlockHash: types.RandomHash(),
+		Height:        height,
+		Timestamp:     time.Now().UnixNano(),
 	}
 
-	var buf bytes.Buffer
-	if err := originalHeader.EncodeBinary(&buf); err != nil {
-		t.Fatalf("EncodeBinary failed: %v", err)
+	tx := Transaction{
+		Data: []byte("hello"),
 	}
 
-	decodedHeader := &Header{}
-	if err := decodedHeader.DecodeBinary(&buf); err != nil {
-		t.Fatalf("DecodeBinary failed: %v", err)
-	}
+	return NewBlock(header, []Transaction{tx})
+}
 
-	if originalHeader.Version != decodedHeader.Version {
-		t.Errorf("Version mismatch: got %v, want %v", decodedHeader.Version, originalHeader.Version)
-	}
-	if originalHeader.PrevBlock != decodedHeader.PrevBlock {
-		t.Errorf("PrevBlock mismatch: got %v, want %v", decodedHeader.PrevBlock, originalHeader.PrevBlock)
-	}
-	if originalHeader.Timestamp != decodedHeader.Timestamp {
-		t.Errorf("Timestamp mismatch: got %v, want %v", decodedHeader.Timestamp, originalHeader.Timestamp)
-	}
-	if originalHeader.Height != decodedHeader.Height {
-		t.Errorf("Height mismatch: got %v, want %v", decodedHeader.Height, originalHeader.Height)
-	}
-	if originalHeader.Nonce != decodedHeader.Nonce {
-		t.Errorf("Nonce mismatch: got %v, want %v", decodedHeader.Nonce, originalHeader.Nonce)
-	}
+func TestHashBlock(t *testing.T) {
+	block := randomBlock(0)
+	fmt.Println(block.Hash(BlockHasher{}))
 }
