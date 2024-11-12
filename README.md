@@ -20,6 +20,7 @@ This project aims to create a custom blockchain tailored for metadata use cases.
 - Create block builder 
 - Create tranaction object to append to a block
 - Create private/public key generator for sign and verification
+- Create signing of blocks
 - ...(in progress)
 
 ## Tests

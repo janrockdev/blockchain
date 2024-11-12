@@ -1,6 +1,9 @@
 package engine
 
 import (
+	"bytes"
+	"encoding/gob"
+	"fmt"
 	"io"
 
 	"github.com/janrockdev/blockchain/types"
@@ -32,9 +35,29 @@ func NewBlock(header *Header, txs []Transaction) *Block {
 	}
 }
 
-// func (b *Block) Sign() {
-// 	return nil
-// }
+func (b *Block) Sign(privKey utils.PrivateKey) error {
+	sig, err := privKey.Sign(b.HeaderData())
+	if err != nil {
+		return err
+	}
+
+	b.Validator = privKey.PublicKey()
+	b.Signature = sig
+
+	return nil
+}
+
+func (b *Block) Verify() error {
+	if b.Signature == nil {
+		return fmt.Errorf("block has no signature")
+	}
+
+	if !b.Signature.Verify(b.Validator, b.HeaderData()) {
+		return fmt.Errorf("block signature is invalid")
+	}
+
+	return nil
+}
 
 func (b *Block) Decode(r io.Reader, dec Decoder[*Block]) error {
 	return dec.Decode(r, b)
@@ -50,4 +73,12 @@ func (b *Block) Hash(hasher Hasher[*Block]) types.Hash {
 	}
 
 	return b.hash
+}
+
+func (b *Block) HeaderData() []byte {
+	buf := &bytes.Buffer{}
+	enc := gob.NewEncoder(buf)
+	enc.Encode(b.Header)
+
+	return buf.Bytes()
 }

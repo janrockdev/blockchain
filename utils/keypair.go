@@ -60,6 +60,6 @@ type Signature struct {
 	r, s *big.Int
 }
 
-func (sig Signature) Verify(data []byte, pubKey PublicKey) bool {
+func (sig Signature) Verify(pubKey PublicKey, data []byte) bool {
 	return ecdsa.Verify(pubKey.pub, data, sig.r, sig.s)
 }

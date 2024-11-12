@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"io"
+	"fmt"
 
 	"github.com/janrockdev/blockchain/utils"
 )
@@ -25,10 +25,14 @@ func (tx *Transaction) Sign(privKey utils.PrivateKey) error {
 	return nil
 }
 
-func (t *Transaction) EncodeBinary(w io.Writer) error {
-	return nil
-}
+func (tx *Transaction) Verify() error {
+	if tx.Signature == nil {
+		return fmt.Errorf("transaction has no signed")
+	}
 
-func (t *Transaction) DecodeBinary(r io.Reader) error {
+	if !tx.Signature.Verify(tx.PublicKey, tx.Data) {
+		return fmt.Errorf("transaction signature is invalid")
+	}
+
 	return nil
 }

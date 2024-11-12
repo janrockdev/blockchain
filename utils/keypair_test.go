@@ -62,14 +62,15 @@ func TestVerify(t *testing.T) {
 		t.Fatalf("Expected no error signing data, got %v", err)
 	}
 
-	valid := signature.Verify(data, pubKey)
+	valid := signature.Verify(pubKey, data)
 	if !valid {
 		t.Errorf("Expected signature to be valid, got invalid")
 	}
 
-	invalidData := []byte("tampered data")
-	invalid := signature.Verify(invalidData, pubKey)
+	// Test with tampered data
+	tamperedData := []byte("tampered data")
+	invalid := signature.Verify(pubKey, tamperedData)
 	if invalid {
-		t.Errorf("Expected signature to be invalid for tampered data, got valid")
+		t.Errorf("Expected signature to be invalid with tampered data, got valid")
 	}
 }

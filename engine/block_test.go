@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -12,11 +11,13 @@ import (
 
 type mockHasher struct{}
 
+// Hash returns a fixed hash
 func (m *mockHasher) Hash(b *Block) types.Hash {
 	return types.Hash{0x01, 0x02, 0x03, 0x04}
 }
 
-func TestBlock_Hash(t *testing.T) {
+// TestBlockHash tests the Hash method of the Block struct
+func TestBlockHash(t *testing.T) {
 	header := &Header{
 		Version:       1,
 		DataHash:      types.Hash{0x00},
@@ -45,6 +46,7 @@ func TestBlock_Hash(t *testing.T) {
 	assert.Equal(t, expectedHash, cachedHash, "The cached hash should be returned")
 }
 
+// randomBlock creates a random block for testing
 func randomBlock(height uint32) *Block {
 	header := &Header{
 		Version:       1,
@@ -57,10 +59,24 @@ func randomBlock(height uint32) *Block {
 		Data: []byte("hello"),
 	}
 
+	// Sign the transaction
 	return NewBlock(header, []Transaction{tx})
 }
 
-func TestHashBlock(t *testing.T) {
+// TestSignBlock tests the Sign method of the Block struct
+func TestVerifyBlock(t *testing.T) {
+	// Test with valid signature
+	privKey := utils.GeneratePrivateKey()
 	block := randomBlock(0)
-	fmt.Println(block.Hash(BlockHasher{}))
+	assert.Nil(t, block.Sign(privKey))
+	assert.Nil(t, block.Verify())
+
+	// Test with no signature
+	otherPrivKey := utils.GeneratePrivateKey()
+	block.Validator = otherPrivKey.PublicKey()
+	assert.NotNil(t, block.Verify())
+
+	// Test with tampered data
+	block.Height = 100
+	assert.NotNil(t, block.Verify())
 }
