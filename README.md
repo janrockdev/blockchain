@@ -1,5 +1,7 @@
 # Custom Blockchain Build
 
+[![Go](https://github.com/janrockdev/blockchain/actions/workflows/go.yml/badge.svg)](https://github.com/janrockdev/blockchain/actions/workflows/go.yml)
+
 ## Project Description
 
 This project aims to create a custom blockchain tailored for metadata use cases. The focus is on building a flexible and modular architecture that allows for easy customization and integration with various network protocols. The blockchain will support efficient metadata storage, retrieval, and management, making it ideal for applications that require robust and fast metadata tracing proof.
