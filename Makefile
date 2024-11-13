@@ -5,4 +5,7 @@ run: build
 	./bin/node
 
 test:
+	go test ./...
+
+testv:
 	go test -v ./...
