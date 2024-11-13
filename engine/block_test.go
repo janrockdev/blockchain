@@ -63,6 +63,25 @@ func randomBlock(height uint32) *Block {
 	return NewBlock(header, []Transaction{tx})
 }
 
+func randomBlockWithSignature(height uint32) *Block {
+	header := &Header{
+		Version:       1,
+		PrevBlockHash: types.RandomHash(),
+		Height:        height,
+		Timestamp:     time.Now().UnixNano(),
+	}
+
+	tx := Transaction{
+		Data: []byte("hello"),
+	}
+
+	// Sign the transaction
+	block := NewBlock(header, []Transaction{tx})
+	block.Sign(utils.GeneratePrivateKey())
+
+	return block
+}
+
 // TestSignBlock tests the Sign method of the Block struct
 func TestVerifyBlock(t *testing.T) {
 	// Test with valid signature
